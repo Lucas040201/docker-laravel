@@ -5,7 +5,8 @@ services:
   nginx:
     depends_on:
       - backend
-    build: ./docker/nginx
+    build:
+      context: './docker/nginx'
     ports:
       - "8080:80"
     networks:
@@ -17,7 +18,8 @@ services:
   backend:
     depends_on:
       - database
-    build: ./docker/php
+    build:
+      context: './docker/php'
     networks:
       - server
       - database
@@ -29,14 +31,16 @@ services:
       replicas: 1
 
   database:
-    build: ./docker/postgres
+    build:
+      context: './docker/postgres'
     ports:
       - "5432:5432"
-    env_file:
-      - docker/postgres/config/.env
+    environment:
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=app
+      - POSTGRES_DB=app
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - pgconf:/etc/postgresql/
+      - db-data:/var/lib/postgresql/data
     networks:
       - database
 
@@ -47,7 +51,4 @@ networks:
     driver: bridge
 
 volumes:
-  pgdata:
-    driver: local
-  pgconf:
-    driver: local
+  db-data:
