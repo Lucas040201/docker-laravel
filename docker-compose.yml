@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+
+  nginx:
+    depends_on:
+      - backend
+    build: ./docker/nginx
+    ports:
+      - "8080:80"
+    networks:
+      - server
+    volumes:
+      - ./app/:/var/www/html/
+      - ./logs/nginx:/var/log/nginx/
+
+  backend:
+    depends_on:
+      - database
+    build: ./docker/php
+    networks:
+      - server
+      - database
+    volumes:
+      - ./app/:/var/www/html/
+      - ./logs/php:/var/log/
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  database:
+    build: ./docker/postgres
+    ports:
+      - "5432:5432"
+    env_file:
+      - docker/postgres/config/.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - pgconf:/etc/postgresql/
+    networks:
+      - database
+
+networks:
+  server:
+    driver: bridge
+  database:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local
+  pgconf:
+    driver: local
