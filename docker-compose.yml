@@ -26,6 +26,7 @@ services:
     volumes:
       - ./app/:/var/www/html/
       - ./logs/php:/var/log/
+      - ./docker/php/config/php.ini:/usr/local/etc/php/php.ini
     deploy:
       mode: replicated
       replicas: 1
