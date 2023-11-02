@@ -1,8 +1,6 @@
 FROM php:8.2-fpm-alpine
 
 ARG user=dev
-ARG uid=1010
-
 WORKDIR /var/www/html
 
 #install php extensions
@@ -13,8 +11,9 @@ RUN sh install.sh
 RUN rm -rf /var/cache/apk/*
 
 #create user to run inside container
-RUN addgroup -g $uid -S $user && adduser -u $uid -S -G $user -h /home/$user -D $user
-RUN mkdir -p /home/$user/.composer && chown -R $user:$user /home/$user
+RUN adduser -D $user
+RUN adduser $user www-data
+RUN chown -R $user:www-data /var/www/html
 
 #define user of container
 USER dev
