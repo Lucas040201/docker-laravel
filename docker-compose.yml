@@ -1,10 +1,9 @@
-version: "3.8"
-
 services:
   nginx:
     depends_on:
       - backend
     image: laravel_nginx
+    build: ./docker/nginx/
     ports:
       - "8080:80"
     networks:
@@ -16,6 +15,7 @@ services:
     depends_on:
       - database
     image: laravel_backend
+    build: ./docker/php/
     networks:
       - server
       - database
@@ -33,6 +33,7 @@ services:
           memory: 1024M
   database:
     image: laravel_database
+    build: ./docker/postgres/
     ports:
       - "5432:5432"
     environment:
